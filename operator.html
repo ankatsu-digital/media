@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>操作端末 | Multicam Switcher</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="topbar">
+    <div class="brand"><span class="status-dot connected" id="statusDot"></span><b>SWITCHER</b> — <span id="roomLabel"></span></div>
+    <div class="timecode" id="timecode">00:00:00:00</div>
+  </div>
+
+  <div class="operator-layout">
+    <div class="grid-area" id="grid">
+      <div class="empty-hint" id="emptyHint">カメラの接続待ち…<br>スマホ側で同じルームコードを入力してください</div>
+    </div>
+
+    <div class="side-panel">
+      <div>
+        <div class="pgm-caption">PROGRAM OUT (録画される映像)</div>
+        <div class="pgm-preview">
+          <canvas id="pgmCanvas" width="1280" height="720"></canvas>
+        </div>
+      </div>
+
+      <button class="rec-btn" id="recBtn">● 録画開始</button>
+
+      <div class="room-info">
+        ルーム: <b id="roomInfo"></b><br>
+        接続カメラ数: <b id="camCount">0</b><br>
+        現在のON AIR: <b id="liveInfo">なし</b>
+      </div>
+
+      <div class="log" id="log"></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+  <script src="config.js"></script>
+  <script src="operator.js"></script>
+</body>
+</html>

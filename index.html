@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Multicam Switcher</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="topbar">
+    <div class="brand"><b>MULTICAM</b> SWITCHER</div>
+  </div>
+
+  <div class="landing">
+    <h1>ルームに接続</h1>
+    <p class="sub">同じルームコードを使う端末同士がつながります。カメラ端末と操作端末で同じコードを入力してください。</p>
+
+    <label>ルームコード</label>
+    <input id="roomId" placeholder="例: shoot-0808" autocomplete="off">
+
+    <label>名前 / カメラ番号 (カメラ端末の場合)</label>
+    <input id="camName" placeholder="例: カメラ1 (正面)" autocomplete="off">
+
+    <div class="role-buttons">
+      <button class="btn-primary" id="goCamera">📱 カメラ端末として開始</button>
+      <button class="btn-secondary" id="goOperator">🎛 操作端末として開始</button>
+    </div>
+  </div>
+
+  <script>
+    function go(role) {
+      const roomId = document.getElementById('roomId').value.trim();
+      const name = document.getElementById('camName').value.trim();
+      if (!roomId) { alert('ルームコードを入力してください'); return; }
+      const params = new URLSearchParams({ room: roomId, name });
+      const dest = role === 'camera' ? 'camera.html' : 'operator.html';
+      window.location.href = `${dest}?${params.toString()}`;
+    }
+    document.getElementById('goCamera').onclick = () => go('camera');
+    document.getElementById('goOperator').onclick = () => go('operator');
+  </script>
+</body>
+</html>

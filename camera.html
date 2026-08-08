@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>カメラ端末 | Multicam Switcher</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="topbar">
+    <div class="brand"><span class="status-dot" id="statusDot"></span><b id="camTitle">CAMERA</b></div>
+    <div class="timecode" id="timecode">00:00:00:00</div>
+  </div>
+
+  <div class="camera-stage">
+    <video id="localVideo" autoplay playsinline muted></video>
+    <div class="on-air-badge" id="onAirBadge">● ON AIR</div>
+    <div class="cam-label" id="camLabel"></div>
+  </div>
+
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+  <script src="config.js"></script>
+  <script src="camera.js"></script>
+</body>
+</html>
