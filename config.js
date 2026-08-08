@@ -4,4 +4,4 @@
 // After deploying it, put its HTTPS URL here. Both camera.html and
 // operator.html load this file before camera.js / operator.js.
 
-const SIGNALING_SERVER_URL = 'https://your-signaling-server.onrender.com';
+const SIGNALING_SERVER_URL = 'https://media-6o5j.onrender.com';
