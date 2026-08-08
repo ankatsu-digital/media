@@ -49,6 +49,16 @@ body {
   border: 1px solid var(--line);
 }
 
+.camera-select {
+  background: #0e0f12;
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 13px;
+  max-width: 42vw;
+}
+
 .status-dot {
   display: inline-block;
   width: 8px;

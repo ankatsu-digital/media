@@ -34,14 +34,72 @@ const ICE_SERVERS = [
 
 let localStream = null;
 const peerConnections = new Map(); // operatorSocketId -> RTCPeerConnection
+const cameraSelect = document.getElementById('cameraSelect');
+
+async function listCameras(selectedDeviceId) {
+  const devices = await navigator.mediaDevices.enumerateDevices();
+  const videoInputs = devices.filter((d) => d.kind === 'videoinput');
+
+  cameraSelect.innerHTML = '';
+  videoInputs.forEach((device, i) => {
+    const opt = document.createElement('option');
+    opt.value = device.deviceId;
+    // Labels are only populated once permission has been granted.
+    opt.textContent = device.label || `カメラ ${i + 1}`;
+    if (device.deviceId === selectedDeviceId) opt.selected = true;
+    cameraSelect.appendChild(opt);
+  });
+}
+
+async function openCamera(deviceId) {
+  // Stop whatever we had before switching.
+  if (localStream) {
+    localStream.getTracks().forEach((t) => t.stop());
+  }
+
+  const videoConstraint = deviceId
+    ? { deviceId: { exact: deviceId } }
+    : { facingMode: 'environment' }; // sensible default: back camera on phones
+
+  localStream = await navigator.mediaDevices.getUserMedia({
+    video: { ...videoConstraint, width: { ideal: 1280 }, height: { ideal: 720 } },
+    audio: true
+  });
+  localVideo.srcObject = localStream;
+
+  // Swap the live track into every peer connection already sending to the operator,
+  // so switching cameras mid-shoot doesn't require reconnecting.
+  const newVideoTrack = localStream.getVideoTracks()[0];
+  const newAudioTrack = localStream.getAudioTracks()[0];
+  peerConnections.forEach((pc) => {
+    pc.getSenders().forEach((sender) => {
+      if (sender.track && sender.track.kind === 'video' && newVideoTrack) {
+        sender.replaceTrack(newVideoTrack);
+      } else if (sender.track && sender.track.kind === 'audio' && newAudioTrack) {
+        sender.replaceTrack(newAudioTrack);
+      }
+    });
+  });
+
+  // Now that permission is granted, device labels become available — refresh the list.
+  const activeId = localStream.getVideoTracks()[0]?.getSettings().deviceId;
+  await listCameras(activeId);
+}
+
+cameraSelect.addEventListener('change', () => {
+  openCamera(cameraSelect.value).catch((err) => {
+    alert('カメラの切り替えに失敗しました: ' + err.message);
+  });
+});
+
+navigator.mediaDevices.addEventListener?.('devicechange', () => {
+  const activeId = localStream?.getVideoTracks()[0]?.getSettings().deviceId;
+  listCameras(activeId).catch(() => {});
+});
 
 async function start() {
   try {
-    localStream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } },
-      audio: true
-    });
-    localVideo.srcObject = localStream;
+    await openCamera(); // default camera first (back camera on phones)
   } catch (err) {
     alert('カメラ/マイクへのアクセスが必要です: ' + err.message);
     return;
