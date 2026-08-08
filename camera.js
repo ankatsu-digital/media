@@ -39,8 +39,17 @@ const cameraSelect = document.getElementById('cameraSelect');
 async function listCameras(selectedDeviceId) {
   const devices = await navigator.mediaDevices.enumerateDevices();
   const videoInputs = devices.filter((d) => d.kind === 'videoinput');
+  console.log('[camera] enumerateDevices videoinputs:', videoInputs);
 
   cameraSelect.innerHTML = '';
+
+  if (videoInputs.length === 0) {
+    const opt = document.createElement('option');
+    opt.textContent = 'カメラが見つかりません';
+    cameraSelect.appendChild(opt);
+    return;
+  }
+
   videoInputs.forEach((device, i) => {
     const opt = document.createElement('option');
     opt.value = device.deviceId;
@@ -101,6 +110,7 @@ async function start() {
   try {
     await openCamera(); // default camera first (back camera on phones)
   } catch (err) {
+    console.error('[camera] getUserMedia failed:', err);
     alert('カメラ/マイクへのアクセスが必要です: ' + err.message);
     return;
   }
